@@ -2,8 +2,9 @@ package com.bikkadIt.ElectronicStore.service;
 
 import com.bikkadIt.ElectronicStore.dtos.AddItemToCartRequest;
 import com.bikkadIt.ElectronicStore.dtos.CartDto;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public interface CartService {
     //add items to cart
     //case1: cart for user is not available:- we will create the cart and cartItem

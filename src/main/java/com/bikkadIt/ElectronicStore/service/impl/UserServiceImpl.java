@@ -33,10 +33,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper mapper;
 
-      @Value("${user.profile.image.path}")
-    private  String imagePath;
+    @Value("${user.profile.image.path}")
+    private String imagePath;
 
-      private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 //    public UserServiceImpl(UseRepository useRepository, ModelMapper mapper) {
 //        this.useRepository = useRepository;
@@ -58,17 +58,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String userId) {
-        User user = useRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("this is user Repository"));
+        User user = useRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("this is user Repository"));
         //this.useRepository.delete(user);
 
-        String fullPath= imagePath + user.getImageName();
+        String fullPath = imagePath + user.getImageName();
         try {
             Path path = Paths.get(fullPath);
-                Files.delete(path);
-            } catch (NoSuchFileException ex) {
-                logger.info("User_Image not found Foldre");
-                ex.printStackTrace();
-        }catch (IOException ex){
+            Files.delete(path);
+        } catch (NoSuchFileException ex) {
+            logger.info("User_Image not found Foldre");
+            ex.printStackTrace();
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageableResponse<UserDto> getAllUser(int pageNumber, int pageSize, String sortBy, String sortDir) {
 
-        Sort sort = (sortDir.equalsIgnoreCase("desc"))? (Sort.by(sortBy).descending()) :(Sort.by(sortBy).ascending()) ;
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<User> page = useRepository.findAll(pageable);
         List<User> users = page.getContent();
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
                 .map(this::entityToDto)
                 .collect(Collectors.toList());
 
-        PageableResponse<UserDto> pageableResponse =new PageableResponse<>();
+        PageableResponse<UserDto> pageableResponse = new PageableResponse<>();
         pageableResponse.setContent(dtoList);
         pageableResponse.setPageNumber(page.getNumber());
         pageableResponse.setPageSize(page.getSize());
@@ -109,40 +109,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByEmail(String Email) {
         User user = useRepository.findByEmail(Email)
-                .orElseThrow(()->new ResourceNotFoundException("user not found with given"));
+                .orElseThrow(() -> new ResourceNotFoundException("user not found with given"));
         return entityToDto(user);
     }
 
     @Override
     public List<UserDto> searchUser(String Keyword) {
-      List<User> users = useRepository.findByNameContaining(Keyword);
+        List<User> users = useRepository.findByNameContaining(Keyword);
 
         return users.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 
     @Override
     public UserDto updateUser(UserDto userDto, String userId) {
-        User user = useRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User not found with given id"));
+        User user = useRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with given id"));
         user.setName(userDto.getName());
-       //Email update
-     user.setAbout(userDto.getAbout());
-     user.setGender(userDto.getGender());
-     user.setPassword(userDto.getPassword());
-     user.setImageName(userDto.getImageName());
+        //Email update
+        user.setAbout(userDto.getAbout());
+        user.setGender(userDto.getGender());
+        user.setPassword(userDto.getPassword());
+        user.setImageName(userDto.getImageName());
 
-     //save data
-        User user1=useRepository.save(user);
+        //save data
+        User user1 = useRepository.save(user);
         userDto.updatedDto = entityToDto(user1);
         return userDto;
     }
 
     private UserDto entityToDto(Object savedUser) {
 
-        return mapper.map(savedUser,UserDto.class);
+        return mapper.map(savedUser, UserDto.class);
     }
 
     private User dtoToEntity(UserDto userDto) {
-     //se manually method dtoToEntity
-        return mapper.map(userDto,User.class);
+        //se manually method dtoToEntity
+        return mapper.map(userDto, User.class);
     }
 }

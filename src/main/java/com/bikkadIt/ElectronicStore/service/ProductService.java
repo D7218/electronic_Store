@@ -2,7 +2,9 @@ package com.bikkadIt.ElectronicStore.service;
 
 import com.bikkadIt.ElectronicStore.dtos.PageableResponse;
 import com.bikkadIt.ElectronicStore.dtos.ProductDto;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface ProductService {
     //create
    ProductDto create(ProductDto productDto);

@@ -24,7 +24,7 @@ public class CartItem {
     private int totalPrice;
 
     //mapping cart
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cart_id")
     private Cart cart;
 }

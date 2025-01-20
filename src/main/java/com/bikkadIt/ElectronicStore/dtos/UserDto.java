@@ -12,19 +12,19 @@ public class UserDto {
 
     public UserDto updatedDto;
     private String userId;
-   //@Size(min = 3,max = 15,message = "Invalid Name !!")
+    //@Size(min = 3,max = 15,message = "Invalid Name !!")
     private String name;
-  // @Pattern(regexp = "^[a-zA-Z0-9]{6,12}$" ,message = "Invalid user email id")
+    // @Pattern(regexp = "^[a-zA-Z0-9]{6,12}$" ,message = "Invalid user email id")
 //@NotBlank(message =  "email is required")
     private String email;
-//@NotBlank(message = "Invalid is required")
+    //@NotBlank(message = "Invalid is required")
     private String password;
- // @Size(min = 4,max = 6,message = "Invalid gender")
+    // @Size(min = 4,max = 6,message = "Invalid gender")
     private String gender;
- // @NotBlank(message = "write something about yourself")
+    // @NotBlank(message = "write something about yourself")
     private String about;
 
- // @ImageNameValid
+    // @ImageNameValid
     private String ImageName;
 
 }

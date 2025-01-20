@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
-  //creating categoryId:randomly
+        //creating categoryId:randomly
         String categoryId = UUID.randomUUID().toString();
         categoryDto.setCatagoryId(categoryId);
 

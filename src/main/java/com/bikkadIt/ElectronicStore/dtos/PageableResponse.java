@@ -3,12 +3,13 @@ package com.bikkadIt.ElectronicStore.dtos;
 import lombok.*;
 
 import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PageableResponse <T> {
+public class PageableResponse<T> {
 
     private List<T> content;
     private int pageNumber;
@@ -20,7 +21,6 @@ public class PageableResponse <T> {
     public void setTotalElements(long totalElements) {
     }
 
-    
 
     public void setLastpage(boolean last) {
     }

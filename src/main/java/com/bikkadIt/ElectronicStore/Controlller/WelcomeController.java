@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class WelcomeController {
     @GetMapping
-    public String test(){
+    public String test() {
         return "welcome to bikkadit";
     }
 }

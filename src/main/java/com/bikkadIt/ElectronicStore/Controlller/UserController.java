@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController{
+public class UserController {
 
     @Autowired
     private UserService userService;
@@ -33,79 +33,84 @@ public class UserController{
     private FileService fileService;
 
     @Value("${user.profile.image.path}")
-    private String  imageUploadPath;
+    private String imageUploadPath;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //create
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
-       UserDto user = userService.createUser(userDto);
-       return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        UserDto user = userService.createUser(userDto);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
     //update
-     @PutMapping("/{userId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser
-             (@PathVariable("userId") String userId,
-            @Valid @RequestBody UserDto userDto){
-        UserDto updatedUserDto = userService.updateUser(userDto,userId);
+    (@PathVariable("userId") String userId,
+     @Valid @RequestBody UserDto userDto) {
+        UserDto updatedUserDto = userService.updateUser(userDto, userId);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
 
     //delete
     @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable String userId){
-    userService.deleteUser(userId);
-       ApiResponseMessage message = ApiResponseMessage.builder()
-               .message("user is deleted successfully")
-               .success(true)
-               .status(HttpStatus.OK)
-               .build();
-           return new ResponseEntity<>(message,HttpStatus.OK);
+    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        ApiResponseMessage message = ApiResponseMessage.builder()
+                .message("user is deleted successfully")
+                .success(true)
+                .status(HttpStatus.OK)
+                .build();
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
+
     //get all
     @GetMapping
     public ResponseEntity<PageableResponse<UserDto>> getAllUsers(
 
-        @RequestParam(value = "pageNumber", defaultValue = "0",required = false)int pageNumber,
-        @RequestParam(value = "pageSize",defaultValue = "10",required = false)int pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
 
-        @RequestParam(value = "sortedBy", defaultValue = "name",required = false)String sortedBy,
-        @RequestParam(value = "sortDir",defaultValue = "ASC",required = false)String sortDir
-        ){
-        return new ResponseEntity<>(userService.getAllUser(pageNumber,pageSize,sortDir,sortedBy),HttpStatus.OK);
+            @RequestParam(value = "sortedBy", defaultValue = "name", required = false) String sortedBy,
+            @RequestParam(value = "sortDir", defaultValue = "ASC", required = false) String sortDir
+    ) {
+        return new ResponseEntity<>(userService.getAllUser(pageNumber, pageSize, sortDir, sortedBy), HttpStatus.OK);
     }
 
     //get single
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserById( @PathVariable String userId){
+    public ResponseEntity<UserDto> getUserById(@PathVariable String userId) {
         UserDto userById = userService.getUserById(userId);
-        return new ResponseEntity<>(userById,HttpStatus.OK);
+        return new ResponseEntity<>(userById, HttpStatus.OK);
     }
+
     //get by email
     @GetMapping("/email/{email}")
-    public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email){
+    public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email) {
         UserDto user = userService.getUserByEmail(email);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
     //search user
     @GetMapping("/search/{keywords}")
-    public ResponseEntity<List<UserDto>> searchUser(@PathVariable("keywords") String keywords){
+    public ResponseEntity<List<UserDto>> searchUser(@PathVariable("keywords") String keywords) {
         List<UserDto> dtos = userService.searchUser(keywords);
         return new ResponseEntity<>(dtos, HttpStatus.CREATED);
     }
+
     //upload user image
     @PostMapping("/image/{userId}")
     public ResponseEntity<ImageResponse> uploadUserImage
-    (@RequestParam("userImage")MultipartFile image, @PathVariable String userId) throws IOException {
-       String imageName = fileService.uploadFile(image ,imageUploadPath);
+    (@RequestParam("userImage") MultipartFile image, @PathVariable String userId) throws IOException {
+        String imageName = fileService.uploadFile(image, imageUploadPath);
         UserDto user = userService.getUserById(userId);
 
         user.setImageName(imageName);
-        UserDto userDto = userService.updateUser(user,userId);
+        UserDto userDto = userService.updateUser(user, userId);
         ImageResponse imageResponse = ImageResponse.builder()
                 .imageName(imageName)
                 .success(true)
@@ -113,14 +118,15 @@ public class UserController{
                 .build();
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     //serve user image
-@GetMapping("/image/{userId}")
+    @GetMapping("/image/{userId}")
     public void setUserImage(@PathVariable String userId, HttpServletResponse response) throws IOException {
-        UserDto user  = userService.getUserById(userId);
+        UserDto user = userService.getUserById(userId);
         logger.info("user image name : {} ", user.getImageName());
         InputStream resource = fileService.getResource(imageUploadPath, user.getImageName());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-         StreamUtils.copy(resource,response.getOutputStream());
+        StreamUtils.copy(resource, response.getOutputStream());
 
     }
     //upload post image

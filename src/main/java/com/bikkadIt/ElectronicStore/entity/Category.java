@@ -14,17 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name ="catagory")
+@Table(name = "catagory")
 public class Category {
     @Id
     @Column(name = "id")
     private String catagoryId;
-   @Column(name = "catagory_title", length = 60,nullable = false)
+    @Column(name = "catagory_title", length = 60, nullable = false)
     private String title;
-   @Column(name = "catagory_desc", length = 500)
+    @Column(name = "catagory_desc", length = 500)
     private String description;
     private String coverImage;
- //other attributes if you
-   @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-   private List<Product> products = new ArrayList<>();
+    //other attributes if you
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
 }

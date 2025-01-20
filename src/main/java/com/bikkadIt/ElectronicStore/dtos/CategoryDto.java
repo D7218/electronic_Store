@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryDto {
     private String catagoryId;
-@NotBlank
-@Min(value = 4,message = "tithle must be of minimum 4 charecher !!")
+    @NotBlank
+    @Min(value = 4, message = "tithle must be of minimum 4 charecher !!")
     private String title;
- @NotBlank(message = "Description required ")
+    @NotBlank(message = "Description required ")
     private String description;
 
     private String coverImage;

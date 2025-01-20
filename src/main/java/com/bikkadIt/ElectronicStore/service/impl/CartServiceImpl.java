@@ -17,10 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -41,44 +38,53 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartItemRepository cartItemRepository;
 
+
+//    @Autowired
+//    private  CartItem cartItem;  // delete if not required
+
     @Override
     public CartDto addItemToCart(String userId, AddItemToCartRequest request) {
         int quantity = request.getQuantity();
         String productId = request.getProductId();
-          if (quantity <=0){
-              throw new BadApiRequestException("Request quantity is not valid !!");
-          }
-        System.out.println("this is the");
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("this add for product item"));
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found in database"));
-               Cart cart = null;
-               try{
-                   cart = cartRepository.findByUser(user).get();
-               }catch (NoSuchElementException e){
-                   cart = new Cart();
-                   cart.setCartId(UUID.randomUUID().toString());
-                   cart.setCreatedAt(new Date());
-               }
-       // System.out.println("final cart complete");
-        //perform cart operation
-        //if cart item already present ; then update
+        if (quantity <= 0) {
+            throw new BadApiRequestException("Quantity must be greater than zero.");
+        }
 
-        AtomicReference<Boolean> updated = new AtomicReference(false);
-        List<CartItem> items = cart.getItems();
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with ID " + productId + " not found."));
 
-        List<CartItem> updatedItems = items.stream().map(item -> {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + " not found."));
+
+        Cart cart = cartRepository.findByUser(user).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setCartId(UUID.randomUUID().toString());
+            newCart.setCreatedAt(new Date());
+            newCart.setUser(user);
+
+            CartItem item = CartItem.builder().product(product)
+                    .quantity(quantity)
+                    .build();
+            ArrayList<CartItem> cartItems = new ArrayList<>();
+            cartItems.add(item);
+            newCart.setItems(cartItems);
+
+            return cartRepository.save(newCart); // Save new cart immediately
+        });
+
+        boolean updated = false;
+
+        for (CartItem item : cart.getItems()) {
             if (item.getProduct().getProductId().equals(productId)) {
                 item.setQuantity(quantity);
-                item.setTotalPrice(quantity * product.getPrice());
-                updated.set(true);
-
+                item.setTotalPrice(quantity * product.getDiscountedPrice());
+                updated = true;
+                break;
             }
-            return item;
-        }).collect(Collectors.toList());
+        }
 
-        //create items
-        if (!updated.get()) {
+        if (!updated) {
             CartItem cartItem = CartItem.builder()
                     .quantity(quantity)
                     .totalPrice(quantity * product.getDiscountedPrice())
@@ -87,27 +93,27 @@ public class CartServiceImpl implements CartService {
                     .build();
             cart.getItems().add(cartItem);
         }
-            cart.setItems(updatedItems);
-            cart.setUser(user);
-            Cart updateCart = cartRepository.save(cart);
-            return mapper.map(updateCart, CartDto.class);
-        }
 
-        @Override
-        public void removeItemFromCart(String userId,int cartItem){
-           // conditions
-            CartItem cartItem1 = cartItemRepository.findById(cartItem).orElseThrow(() -> new ResourceNotFoundException("cart item not found in "));
-            cartItemRepository.delete(cartItem1);
-        }
+        Cart updatedCart = cartRepository.save(cart);
+        return mapper.map(updatedCart, CartDto.class);
+    }
 
-        @Override
-        public void clearCart (String userId){
+
+    @Override
+    public void removeItemFromCart(String userId, int cartItem) {
+        // conditions
+        CartItem cartItem1 = cartItemRepository.findById(cartItem).orElseThrow(() -> new ResourceNotFoundException("cart item not found in "));
+        cartItemRepository.delete(cartItem1);
+    }
+
+    @Override
+    public void clearCart(String userId) {
         //fetch the user from db
-            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found in database"));
-            Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFoundException("cart of given not found"));
-            cart.getItems().clear();
-            cartRepository.save(cart);
-        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found in database"));
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFoundException("cart of given not found"));
+        cart.getItems().clear();
+        cartRepository.save(cart);
+    }
 
     @Override
     public CartDto getCartByUser(String userId) {

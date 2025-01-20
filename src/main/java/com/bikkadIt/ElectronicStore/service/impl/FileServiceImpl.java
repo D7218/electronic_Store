@@ -53,8 +53,8 @@ public class FileServiceImpl implements FileService {
         return fileName;
     }
 
-      //   Files.copy(file.getInputStream(), Paths.get(filepath));
-        // return fileName;
+    //   Files.copy(file.getInputStream(), Paths.get(filepath));
+    // return fileName;
 //        //String extention = "";
 //        int lastIndexOfDot = originalFileName.lastIndexOf(".");
 //        if (lastIndexOfDot != -1) {
@@ -84,10 +84,9 @@ public class FileServiceImpl implements FileService {
 //        }
 
 
-
     @Override
     public InputStream getResource(String path, String name) throws FileNotFoundException {
-        String fullpath = path+ name;
+        String fullpath = path + name;
         return new FileInputStream(fullpath);
     }
 }

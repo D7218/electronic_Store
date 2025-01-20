@@ -24,7 +24,7 @@ public class CategoryController {
 
     // Create category
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory( @Valid @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         //call service to save object
         CategoryDto createdCategory = categoryService.create(categoryDto);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
@@ -75,8 +75,8 @@ public class CategoryController {
     public ResponseEntity<ProductDto> createProductWithCategory(
             @PathVariable("categoryId") String categoryId,
             @RequestBody ProductDto dto
-    ){
+    ) {
         ProductDto productWithCategory = productService.createWithCategory(dto, categoryId);
-       return new ResponseEntity<>(productWithCategory,HttpStatus.CREATED);
+        return new ResponseEntity<>(productWithCategory, HttpStatus.CREATED);
     }
 }
