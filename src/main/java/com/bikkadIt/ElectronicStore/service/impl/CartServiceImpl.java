@@ -102,7 +102,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public void removeItemFromCart(String userId, int cartItem) {
         // conditions
-        CartItem cartItem1 = cartItemRepository.findById(cartItem).orElseThrow(() -> new ResourceNotFoundException("cart item not found in "));
+        CartItem cartItem1 = cartItemRepository.findById(cartItem)
+                .orElseThrow(() -> new ResourceNotFoundException("cart item not found in "));
         cartItemRepository.delete(cartItem1);
     }
 
@@ -122,5 +123,26 @@ public class CartServiceImpl implements CartService {
 
         return mapper.map(cart, CartDto.class);
     }
+
+    @Override
+    public List<CartDto> getCarts() {
+        List<Cart> carts = cartRepository.findAll();
+        System.out.println("carts before mapp"+carts);
+        List<CartDto> cartDtos=new ArrayList<>();
+        if(!carts.isEmpty()) {
+            for (Cart cart : carts) {
+                CartDto map = mapper.map(cart, CartDto.class);
+                cartDtos.add(map);
+            }
+            return  cartDtos;
+        }
+        else {
+            return cartDtos;
+        }
+
+
+    }
+
+
 }
 
