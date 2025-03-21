@@ -57,6 +57,7 @@ public class CartController {
         CartDto cartDto = cartService.getCartByUser(userId);
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
+    // get the all items
     @GetMapping("/")
     public ResponseEntity<List<CartDto>> getCarts() {
         List<CartDto> cartDtos = cartService.getCarts();
