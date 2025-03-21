@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class UserDto {
 
-    public UserDto updatedDto;
+    private UserDto updatedDto;
     private String userId;
     //@Size(min = 3,max = 15,message = "Invalid Name !!")
     private String name;

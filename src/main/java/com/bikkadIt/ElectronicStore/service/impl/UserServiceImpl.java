@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
         //save data
         User user1 = useRepository.save(user);
-        userDto.updatedDto = entityToDto(user1);
+        UserDto updatedDto = entityToDto(user1);
         return userDto;
     }
 
